@@ -1,1 +1,676 @@
-# my-websiteg
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlutterShop - User Client Panel</title>
+  
+  <!-- Tailwind CSS v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 flex justify-center items-center py-10 px-4 bg-[radial-gradient(#e5e7eb_1.5px,transparent_1.5px)] [background-size:24px_24px]">
+
+  <!-- Mobile Simulator Device Frame -->
+  <div class="w-full max-w-sm bg-white rounded-[40px] border-[10px] border-slate-900 shadow-2xl relative overflow-hidden flex flex-col h-[740px]">
+    
+    <!-- Notch -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-50 flex items-center justify-center">
+      <div class="w-12 h-1 bg-slate-800 rounded-full"></div>
+    </div>
+
+    <!-- Live FCM Push Notification Toast (Animated) -->
+    <div id="notification-banner" class="absolute top-14 left-4 right-4 bg-slate-900/95 text-white rounded-2xl p-3.5 shadow-xl border border-slate-800 z-50 flex items-start gap-3 pointer-events-auto transition-all duration-300 transform -translate-y-32 opacity-0">
+      <div class="p-2 bg-blue-600 rounded-xl text-white flex-shrink-0 mt-0.5 shadow-md shadow-blue-600/10">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      </div>
+      <div class="flex-1">
+        <div class="flex justify-between items-start">
+          <span class="text-[9px] font-bold text-blue-400 font-mono tracking-wider uppercase">FCM Push Notification</span>
+          <button onclick="closeNotification()" class="text-white/40 hover:text-white transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <h4 id="notif-title" class="text-xs font-bold text-white mt-1">Exclusive Discount! 🏷️</h4>
+        <p id="notif-body" class="text-[10px] text-slate-300 mt-0.5 leading-relaxed">Flash sale updated in real-time on our Firestore DB.</p>
+      </div>
+    </div>
+
+    <!-- App Main Screen View -->
+    <div class="flex-1 flex flex-col h-full bg-slate-50 pt-6 overflow-hidden">
+      
+      <!-- App Header -->
+      <header class="h-14 bg-white border-b border-slate-100 px-4 flex items-center justify-between flex-shrink-0 shadow-xs">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-white font-extrabold text-xs shadow-xs">
+            F
+          </div>
+          <div>
+            <h1 class="text-xs font-bold text-slate-900 leading-none">FlutterShop</h1>
+            <p class="text-[8px] text-green-600 font-semibold font-mono flex items-center gap-0.5 mt-0.5">
+              <span class="w-1 h-1 bg-green-500 rounded-full animate-ping"></span>
+              FIRESTORE LIVE
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="user-badge" class="text-[9px] font-bold bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-full">
+            Guest User
+          </span>
+        </div>
+      </header>
+
+      <!-- Main Scrollable Content -->
+      <main id="screen-viewport" class="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+        
+        <!-- SHOP TAB -->
+        <div id="tab-home" class="space-y-4">
+          <!-- Campaign Banner -->
+          <div class="bg-slate-900 text-white rounded-2xl p-4 shadow-md relative overflow-hidden border border-slate-800">
+            <div class="absolute right-[-10px] bottom-[-15px] opacity-5">
+              <svg class="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            </div>
+            <span class="bg-blue-500/20 text-blue-400 text-[9px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded-full border border-blue-500/30">
+              Exclusive Campaign
+            </span>
+            <h3 class="text-sm font-bold mt-2 text-white leading-snug">Curated Premium Selection</h3>
+            <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">Shop top-tier catalog items synced via Google Cloud Firebase.</p>
+          </div>
+
+          <!-- Category Pill Filter -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <button onclick="filterCategory('all')" id="cat-all" class="cat-pill px-3 py-1.5 rounded-full text-[10px] font-bold capitalize whitespace-nowrap transition-all shadow-xs bg-blue-600 text-white border border-blue-600">
+              All Items
+            </button>
+            <button onclick="filterCategory('Electronics')" id="cat-Electronics" class="cat-pill px-3 py-1.5 rounded-full text-[10px] font-bold capitalize whitespace-nowrap transition-all shadow-xs bg-white text-neutral-500 border border-slate-200 hover:border-slate-300">
+              Electronics
+            </button>
+            <button onclick="filterCategory('Furniture')" id="cat-Furniture" class="cat-pill px-3 py-1.5 rounded-full text-[10px] font-bold capitalize whitespace-nowrap transition-all shadow-xs bg-white text-neutral-500 border border-slate-200 hover:border-slate-300">
+              Furniture
+            </button>
+            <button onclick="filterCategory('Accessories')" id="cat-Accessories" class="cat-pill px-3 py-1.5 rounded-full text-[10px] font-bold capitalize whitespace-nowrap transition-all shadow-xs bg-white text-neutral-500 border border-slate-200 hover:border-slate-300">
+              Accessories
+            </button>
+          </div>
+
+          <!-- Catalog Grid -->
+          <div class="space-y-1">
+            <div class="flex justify-between items-center px-1">
+              <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Catalog Inventory</h3>
+              <span id="realtime-status-badge" class="text-[9px] font-bold text-slate-400 font-mono">Real-time Pulling...</span>
+            </div>
+            <div id="products-grid" class="grid grid-cols-2 gap-3 mt-2"></div>
+          </div>
+        </div>
+
+        <!-- EXPLORE TAB -->
+        <div id="tab-explore" class="space-y-4 hidden">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <input 
+              type="text" 
+              id="search-input"
+              oninput="handleSearch(this.value)"
+              placeholder="What are you looking for?" 
+              class="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs focus:outline-none focus:border-blue-500 transition shadow-xs"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Browse Collections</h3>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="filterCategory('Electronics'); switchTab('home')" class="p-3 bg-white border border-slate-100 rounded-xl text-left capitalize font-semibold text-xs text-slate-700 hover:border-blue-500 hover:text-blue-600 transition shadow-xs">
+                🔌 Electronics
+              </button>
+              <button onclick="filterCategory('Furniture'); switchTab('home')" class="p-3 bg-white border border-slate-100 rounded-xl text-left capitalize font-semibold text-xs text-slate-700 hover:border-blue-500 hover:text-blue-600 transition shadow-xs">
+                🪑 Furniture
+              </button>
+              <button onclick="filterCategory('Accessories'); switchTab('home')" class="p-3 bg-white border border-slate-100 rounded-xl text-left capitalize font-semibold text-xs text-slate-700 hover:border-blue-500 hover:text-blue-600 transition shadow-xs">
+                💼 Accessories
+              </button>
+              <button onclick="filterCategory('all'); switchTab('home')" class="p-3 bg-white border border-slate-100 rounded-xl text-left capitalize font-semibold text-xs text-slate-700 hover:border-blue-500 hover:text-blue-600 transition shadow-xs">
+                📦 All Catalogs
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CART TAB -->
+        <div id="tab-cart" class="space-y-4 hidden">
+          <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">Your Shopping Cart</h2>
+          <div id="cart-container" class="space-y-3"></div>
+
+          <div id="checkout-form-section" class="space-y-4 pt-2 hidden">
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+              <span class="text-[9px] text-blue-600 uppercase font-bold tracking-wider">Total Amount to Pay</span>
+              <p id="checkout-total-val" class="text-lg font-black text-blue-950">$0.00</p>
+              <p class="text-[9px] text-slate-500 mt-1">Registers immediately in live database.</p>
+            </div>
+
+            <!-- Shipping Information -->
+            <form onsubmit="placeOrder(event)" class="space-y-3">
+              <div>
+                <label class="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">Full Delivery Address</label>
+                <textarea 
+                  id="shipping-address"
+                  required
+                  rows="2"
+                  placeholder="Street 15, Sector G-11, Islamabad, Pakistan"
+                  class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-blue-500 transition"
+                ></textarea>
+              </div>
+
+              <div>
+                <label class="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">Active Phone Number</label>
+                <input 
+                  type="text"
+                  id="shipping-phone"
+                  required
+                  placeholder="+92 300 1234567"
+                  class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-blue-500 transition"
+                />
+              </div>
+
+              <div>
+                <label class="block text-[9px] font-bold uppercase tracking-wider text-slate-500 mb-1">Payment Method</label>
+                <div class="flex gap-2">
+                  <div class="flex-1 bg-white border border-blue-500 text-blue-700 p-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs">
+                    🚚 Cash on Delivery
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold shadow-md shadow-blue-500/10 text-xs transition mt-4"
+              >
+                Place Simulated Order
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- ORDERS TAB -->
+        <div id="tab-orders" class="space-y-4 hidden">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+            <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Your Placed Orders</h2>
+            <span class="text-[10px] bg-slate-100 px-2 py-0.5 rounded-full font-bold text-slate-500 font-mono">Syncing Active</span>
+          </div>
+          <div id="orders-list-container" class="space-y-3"></div>
+        </div>
+
+      </main>
+
+      <!-- Bottom Navigation Bar -->
+      <nav class="absolute bottom-0 left-0 right-0 h-14 bg-white border-t border-slate-100 flex items-center justify-around flex-shrink-0 z-40">
+        <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center gap-1 text-center flex-1 py-1 text-blue-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          <span class="text-[9px] font-bold">Shop</span>
+        </button>
+        
+        <button onclick="switchTab('explore')" id="nav-explore" class="nav-btn flex flex-col items-center gap-1 text-center flex-1 py-1 text-slate-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span class="text-[9px] font-bold">Explore</span>
+        </button>
+
+        <button onclick="switchTab('cart')" id="nav-cart" class="nav-btn flex flex-col items-center gap-1 text-center flex-1 py-1 text-slate-400 relative">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span id="cart-count-badge" class="absolute top-0 right-7 w-4 h-4 bg-blue-600 text-white rounded-full text-[8px] font-black hidden items-center justify-center border border-white">0</span>
+          <span class="text-[9px] font-bold">Cart</span>
+        </button>
+
+        <button onclick="switchTab('orders')" id="nav-orders" class="nav-btn flex flex-col items-center gap-1 text-center flex-1 py-1 text-slate-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          <span class="text-[9px] font-bold">Orders</span>
+        </button>
+      </nav>
+
+      <!-- Home Indicator Bar -->
+      <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-24 h-1 bg-slate-300 rounded-full z-50"></div>
+    </div>
+  </div>
+
+  <!-- Product Details Modal Bottom Sheet Drawer -->
+  <div id="details-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden transition-all duration-300">
+    <div class="absolute bottom-0 left-0 right-0 max-w-sm mx-auto bg-white rounded-t-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85%] border-t border-slate-200">
+      <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto my-3 cursor-pointer" onclick="closeDetailsModal()"></div>
+      
+      <div class="overflow-y-auto p-4 space-y-4 pb-8">
+        <img id="modal-img" class="w-full h-44 object-cover rounded-2xl border border-slate-150" src="" alt="Product">
+        <div>
+          <span id="modal-category" class="text-[9px] uppercase font-black tracking-wider text-blue-600">CATEGORY</span>
+          <h2 id="modal-title" class="text-sm font-extrabold text-slate-800 leading-tight">Product Name</h2>
+          
+          <div class="flex justify-between items-center mt-2">
+            <p id="modal-price" class="text-base font-extrabold text-blue-600">$0.00</p>
+            <div id="modal-stock-badge" class="px-2 py-0.5 bg-green-50 text-green-700 text-[9px] font-bold rounded">IN STOCK</div>
+          </div>
+        </div>
+
+        <p id="modal-desc" class="text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">Product description copy.</p>
+
+        <!-- WhatsApp Integration Launcher -->
+        <button onclick="triggerWhatsAppIntent()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-500/10 transition mt-4">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.012 2c-5.508 0-9.987 4.479-9.987 9.988 0 1.757.455 3.414 1.254 4.86l-1.326 4.84 4.954-1.298c1.405.765 3.004 1.2 4.705 1.2 5.508 0 9.988-4.479 9.988-9.988 0-5.509-4.48-9.988-9.988-9.988zm4.457 14.153c-.187.527-1.085 1.01-1.488 1.077-.341.057-.783.084-1.272-.083-2.022-.693-3.618-2.617-4.607-4.004-.84-1.173-1.428-2.535-1.428-3.957 0-1.597.832-2.38 1.355-2.923.167-.174.33-.217.436-.217.106 0 .211 0 .311.005.105.006.241-.041.378.291.137.33.473 1.155.515 1.242.043.088.07.19.01.309-.058.118-.088.191-.177.303-.088.111-.186.249-.265.334-.092.098-.188.204-.081.388.106.184.47 1.06 1.011 1.543.696.621 1.282.812 1.467.904.184.092.292.076.4-.049s.467-.542.591-.726c.124-.184.249-.153.422-.089.174.064 1.1.518 1.291.614.19.096.318.143.364.223.047.08.047.464-.14.991z"/></svg>
+          Order via WhatsApp
+        </button>
+
+        <div class="flex gap-2 pt-2">
+          <button onclick="addCurrentToCart()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-3 rounded-xl font-bold transition">
+            Add to Cart
+          </button>
+          <button onclick="buyCurrentNow()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs py-3 rounded-xl font-bold transition">
+            Buy Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mock Catalog Products matching database structure
+    let products = [
+      {
+        id: "prod_1",
+        name: "Pro-Grade Headphones X1",
+        category: "Electronics",
+        price: 299.00,
+        stock: 12,
+        rating: 4.8,
+        imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
+        description: "Premium noise cancelling wireless headphones with 40 hour battery life, custom acoustic drivers, and comfort plush memory ear cups."
+      },
+      {
+        id: "prod_2",
+        name: "Ergonomic Desk Chair",
+        category: "Furniture",
+        price: 189.50,
+        stock: 5,
+        rating: 4.6,
+        imageUrl: "https://images.unsplash.com/photo-1505797149-43b0069ec26b?w=500&q=80",
+        description: "Adjustable executive office chair featuring fully tailored lumbar support system, responsive high density mesh, and premium gas cylinder adjustment."
+      },
+      {
+        id: "prod_3",
+        name: "Smart Watch v4.2 Pro",
+        category: "Electronics",
+        price: 450.00,
+        stock: 18,
+        rating: 4.9,
+        imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
+        description: "Next-gen sports tracker equipped with continuous heart rate sensors, offline cellular network sync, AMOLED touch display, and satellite mapping."
+      },
+      {
+        id: "prod_4",
+        name: "Canvas Travel Duffel",
+        category: "Accessories",
+        price: 65.00,
+        stock: 0,
+        rating: 4.3,
+        imageUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80",
+        description: "Weather-hardened tactical utility duffel bag. Premium brass fittings, reinforced stitching, separate wet compartment, and full luggage mount sleeves."
+      }
+    ];
+
+    let cart = [];
+    let orders = [];
+    let currentSelectedCategory = 'all';
+    let currentSearchTerm = '';
+    let selectedProduct = null;
+
+    // Load active layout tabs
+    function switchTab(tabId) {
+      document.getElementById('tab-home').classList.add('hidden');
+      document.getElementById('tab-explore').classList.add('hidden');
+      document.getElementById('tab-cart').classList.add('hidden');
+      document.getElementById('tab-orders').classList.add('hidden');
+
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-blue-600');
+        btn.classList.add('text-slate-400');
+      });
+      document.getElementById('nav-' + tabId).classList.remove('text-slate-400');
+      document.getElementById('nav-' + tabId).classList.add('text-blue-600');
+
+      if (tabId === 'cart') renderCart();
+      else if (tabId === 'orders') renderOrders();
+    }
+
+    // Render Product Cards Grid
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = '';
+
+      const filtered = products.filter(p => {
+        const matchCat = currentSelectedCategory === 'all' || p.category === currentSelectedCategory;
+        const matchSearch = p.name.toLowerCase().includes(currentSearchTerm.toLowerCase()) || 
+                            p.category.toLowerCase().includes(currentSearchTerm.toLowerCase());
+        return matchCat && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-2 text-center text-[10px] py-8 text-slate-400 font-mono italic">No items found.</div>`;
+        return;
+      }
+
+      filtered.forEach(p => {
+        const isOutOfStock = p.stock === 0;
+        const cardHtml = `
+          <div class="bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-xs flex flex-col justify-between cursor-pointer group" onclick="openDetails('${p.id}')">
+            <div class="relative aspect-square overflow-hidden bg-slate-100">
+              <img src="${p.imageUrl}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+              ${isOutOfStock ? `
+                <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center">
+                  <span class="bg-slate-900/90 text-white text-[9px] font-bold px-2.5 py-1 rounded">OUT OF STOCK</span>
+                </div>
+              ` : ''}
+            </div>
+            <div class="p-2.5 flex-1 flex flex-col justify-between">
+              <div>
+                <p class="text-[8px] uppercase tracking-wider text-blue-600 font-black mb-0.5">${p.category}</p>
+                <h4 class="text-[10px] font-bold text-slate-800 line-clamp-1 leading-tight">${p.name}</h4>
+                <div class="flex items-center gap-1 mt-1">
+                  <span class="text-[9px] font-bold text-amber-500 font-mono">★ ${p.rating}</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center mt-2.5 pt-1.5 border-t border-slate-100">
+                <p class="text-[11px] font-bold text-slate-900">$${p.price.toFixed(2)}</p>
+                <button onclick="event.stopPropagation(); quickAdd('${p.id}')" ${isOutOfStock ? 'disabled' : ''} class="p-1.5 rounded-lg transition ${isOutOfStock ? 'bg-slate-100 text-slate-400' : 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white'}">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', cardHtml);
+      });
+    }
+
+    // Filter by Category Pill list
+    function filterCategory(cat) {
+      currentSelectedCategory = cat;
+      document.querySelectorAll('.cat-pill').forEach(pill => {
+        pill.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+        pill.classList.add('bg-white', 'text-neutral-500', 'border-slate-200');
+      });
+      const activePill = document.getElementById('cat-' + cat);
+      if (activePill) {
+        activePill.classList.remove('bg-white', 'text-neutral-500', 'border-slate-200');
+        activePill.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+      }
+      renderProducts();
+    }
+
+    // Handle Search Bar input
+    function handleSearch(val) {
+      currentSearchTerm = val;
+      renderProducts();
+    }
+
+    // Quick Add
+    function quickAdd(productId) {
+      const prod = products.find(p => p.id === productId);
+      if (prod && prod.stock > 0) {
+        const exists = cart.find(item => item.id === productId);
+        if (exists) {
+          exists.quantity += 1;
+        } else {
+          cart.push({ ...prod, quantity: 1 });
+        }
+        updateCartBadge();
+        showToast("Success", `'${prod.name}' added to your shopping cart.`);
+      }
+    }
+
+    // Update Bottom Nav Cart Badge Counter
+    function updateCartBadge() {
+      const totalCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+      const badge = document.getElementById('cart-count-badge');
+      if (totalCount > 0) {
+        badge.innerText = totalCount;
+        badge.classList.remove('hidden');
+        badge.classList.add('flex');
+      } else {
+        badge.classList.add('hidden');
+        badge.classList.remove('flex');
+      }
+    }
+
+    // Render Shopping Cart list
+    function renderCart() {
+      const container = document.getElementById('cart-container');
+      const checkoutForm = document.getElementById('checkout-form-section');
+      container.innerHTML = '';
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 space-y-3">
+            <p class="text-xs text-slate-500 font-bold">Your cart is empty</p>
+            <button onclick="switchTab('home')" class="text-xs bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 font-semibold shadow-xs transition">
+              Start Shopping
+            </button>
+          </div>
+        `;
+        checkoutForm.classList.add('hidden');
+        return;
+      }
+
+      checkoutForm.classList.remove('hidden');
+      
+      let grandTotal = 0;
+      cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        grandTotal += itemTotal;
+
+        const itemHtml = `
+          <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200/80 shadow-xs">
+            <img src="${item.imageUrl}" alt="${item.name}" class="w-12 h-12 rounded-lg object-cover border border-slate-100">
+            <div class="flex-1 min-w-0">
+              <h4 class="text-xs font-bold text-slate-800 truncate">${item.name}</h4>
+              <p class="text-[10px] text-blue-600 font-bold mt-0.5">$${item.price.toFixed(2)}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="adjustQty('${item.id}', -1)" class="w-6 h-6 bg-slate-100 text-slate-800 rounded-lg font-bold flex items-center justify-center">-</button>
+              <span class="text-xs font-bold font-mono">${item.quantity}</span>
+              <button onclick="adjustQty('${item.id}', 1)" class="w-6 h-6 bg-slate-100 text-slate-800 rounded-lg font-bold flex items-center justify-center">+</button>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', itemHtml);
+      });
+
+      document.getElementById('checkout-total-val').innerText = `$${grandTotal.toFixed(2)}`;
+    }
+
+    function adjustQty(itemId, change) {
+      const index = cart.findIndex(item => item.id === itemId);
+      if (index !== -1) {
+        cart[index].quantity += change;
+        if (cart[index].quantity <= 0) cart.splice(index, 1);
+        updateCartBadge();
+        renderCart();
+      }
+    }
+
+    // Place Order Flow
+    function placeOrder(e) {
+      e.preventDefault();
+      const address = document.getElementById('shipping-address').value;
+      const phone = document.getElementById('shipping-phone').value;
+      const grandTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+      const newOrder = {
+        id: "ORD-" + Math.floor(1000 + Math.random() * 9000),
+        itemsCount: cart.reduce((acc, item) => acc + item.quantity, 0),
+        total: grandTotal,
+        address: address,
+        phone: phone,
+        status: "processing",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      orders.unshift(newOrder);
+      cart = [];
+      updateCartBadge();
+      
+      showToast("Order Placed 🎉", `Simulated transaction ${newOrder.id} generated in live database.`);
+      switchTab('orders');
+    }
+
+    // Render Placed Orders Track list
+    function renderOrders() {
+      const container = document.getElementById('orders-list-container');
+      container.innerHTML = '';
+
+      if (orders.length === 0) {
+        container.innerHTML = `<div class="text-center py-10 text-xs text-slate-400 font-mono italic">No transactions listed in Firestore profile.</div>`;
+        return;
+      }
+
+      orders.forEach(o => {
+        let badgeColor = "bg-yellow-50 text-yellow-700 border-yellow-200";
+        if (o.status === "shipped") badgeColor = "bg-blue-50 text-blue-700 border-blue-200";
+        if (o.status === "delivered") badgeColor = "bg-green-50 text-green-700 border-green-200";
+
+        const orderHtml = `
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-[10px] font-bold text-slate-900 font-mono">${o.id}</span>
+              <span class="text-[9px] font-bold font-mono text-slate-400">${o.timestamp}</span>
+            </div>
+            <div class="flex justify-between items-end pt-1">
+              <div>
+                <p class="text-[10px] text-slate-500">${o.itemsCount} premium packages</p>
+                <p class="text-xs font-black text-slate-800 mt-0.5">$${o.total.toFixed(2)}</p>
+              </div>
+              <span class="px-2.5 py-0.5 border text-[9px] font-bold rounded-md uppercase tracking-wider ${badgeColor}">
+                ${o.status}
+              </span>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', orderHtml);
+      });
+    }
+
+    // Open Drawer Details Bottom Sheet
+    function openDetails(productId) {
+      const prod = products.find(p => p.id === productId);
+      if (prod) {
+        selectedProduct = prod;
+        document.getElementById('modal-img').src = prod.imageUrl;
+        document.getElementById('modal-title').innerText = prod.name;
+        document.getElementById('modal-category').innerText = prod.category;
+        document.getElementById('modal-price').innerText = `$${prod.price.toFixed(2)}`;
+        document.getElementById('modal-desc').innerText = prod.description;
+
+        const isOutOfStock = prod.stock === 0;
+        const stockBadge = document.getElementById('modal-stock-badge');
+        if (isOutOfStock) {
+          stockBadge.innerText = "OUT OF STOCK";
+          stockBadge.className = "px-2 py-0.5 bg-slate-100 text-slate-500 text-[9px] font-bold rounded";
+        } else {
+          stockBadge.innerText = `IN STOCK (${prod.stock} left)`;
+          stockBadge.className = "px-2 py-0.5 bg-green-50 text-green-700 text-[9px] font-bold rounded";
+        }
+
+        const modal = document.getElementById('details-modal');
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.add('bg-slate-900/40'), 10);
+      }
+    }
+
+    function closeDetailsModal() {
+      const modal = document.getElementById('details-modal');
+      modal.classList.add('hidden');
+      selectedProduct = null;
+    }
+
+    // WhatsApp Launcher prefilled details
+    function triggerWhatsAppIntent() {
+      if (!selectedProduct) return;
+      const phoneNumber = "923001234567"; // Business Contact number
+      const textMessage = `Hello! I am interested in purchasing the '${selectedProduct.name}' under ${selectedProduct.category} for $${selectedProduct.price.toFixed(2)}. Is this item currently in stock?`;
+      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(textMessage)}`;
+      window.open(url, '_blank');
+    }
+
+    function addCurrentToCart() {
+      if (selectedProduct && selectedProduct.stock > 0) {
+        quickAdd(selectedProduct.id);
+        closeDetailsModal();
+      }
+    }
+
+    function buyCurrentNow() {
+      if (selectedProduct && selectedProduct.stock > 0) {
+        quickAdd(selectedProduct.id);
+        closeDetailsModal();
+        switchTab('cart');
+      }
+    }
+
+    // Toast Notification controller
+    function showToast(title, body) {
+      document.getElementById('notif-title').innerText = title;
+      document.getElementById('notif-body').innerText = body;
+      
+      const banner = document.getElementById('notification-banner');
+      banner.classList.remove('-translate-y-32', 'opacity-0');
+      setTimeout(() => closeNotification(), 4000);
+    }
+
+    function closeNotification() {
+      const banner = document.getElementById('notification-banner');
+      banner.classList.add('-translate-y-32', 'opacity-0');
+    }
+
+    // Simulated Firestore Stream Connection Updates (Interval loops)
+    setInterval(() => {
+      const eventSelector = Math.floor(Math.random() * 3);
+      if (eventSelector === 0) {
+        // Price change Firestore Sync Event
+        const targetIndex = Math.floor(Math.random() * products.length);
+        const originalPrice = products[targetIndex].price;
+        const discountAmount = Math.floor(5 + Math.random() * 15);
+        products[targetIndex].price = Math.max(20, originalPrice - discountAmount);
+        
+        showToast("Price Drop Sync! 🏷️", `Realtime Firestore sync: '${products[targetIndex].name}' price reduced to $${products[targetIndex].price.toFixed(2)}.`);
+        renderProducts();
+      } else if (eventSelector === 1 && orders.length > 0) {
+        // Order Status Change DB trigger
+        const targetOrder = orders[orders.length - 1];
+        if (targetOrder.status === 'processing') {
+          targetOrder.status = 'shipped';
+          showToast("Order Shipped 🚚", `Your order ${targetOrder.id} has been dispatched in the database.`);
+        } else if (targetOrder.status === 'shipped') {
+          targetOrder.status = 'delivered';
+          showToast("Order Delivered ✅", `Simulated package ${targetOrder.id} marked as delivered!`);
+        }
+        renderOrders();
+      }
+    }, 15000); // 15 seconds event loop
+
+    window.onload = () => {
+      renderProducts();
+    };
+  </script>
+</body>
+</html>
